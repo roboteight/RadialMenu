@@ -1,0 +1,39 @@
+<div class="menu-wrapper">
+  <!-- Connectors are rendered as their own pass, entirely before any node
+       button, so they always sit at a lower DOM index than every button and
+       so never paint over one regardless of which branch/depth they belong to. -->
+  <ng-container *ngFor="let n of flatNodes; trackBy: trackByNodeId">
+    <div
+      *ngIf="n.depth > 0"
+      class="connector"
+      [class.visible]="isVisible(n.parent, n.depth)"
+      [style.--cx]="getConnector(n.node, n.parent, n.depth, n.index, n.total).x + 'px'"
+      [style.--cy]="getConnector(n.node, n.parent, n.depth, n.index, n.total).y + 'px'"
+      [style.--cangle]="getConnector(n.node, n.parent, n.depth, n.index, n.total).angle + 'deg'"
+      [style.--clen]="getConnector(n.node, n.parent, n.depth, n.index, n.total).length"
+    ></div>
+  </ng-container>
+
+  <ng-container *ngFor="let n of flatNodes; trackBy: trackByNodeId">
+    <div
+      class="menu-node"
+      [class.root]="n.depth === 0"
+      [class.expanded]="expandedMap[n.node.id]"
+      [class.visible]="isVisible(n.parent, n.depth)"
+      [style.--x]="getCoords(n.node, n.parent, n.depth, n.index, n.total).x + 'px'"
+      [style.--y]="getCoords(n.node, n.parent, n.depth, n.index, n.total).y + 'px'"
+      [style.--depth]="n.depth"
+      (click)="onNodeClick($event, n.node, n.parent)"
+    >
+      <!-- Center Icon/Text -->
+      <div class="node-content">
+        <ng-container *ngIf="n.depth === 0">
+          <span class="hamburger" [class.open]="expandedMap[n.node.id]"></span>
+        </ng-container>
+        <ng-container *ngIf="n.depth > 0">
+          {{ n.node.label }}
+        </ng-container>
+      </div>
+    </div>
+  </ng-container>
+</div>
